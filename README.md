@@ -114,7 +114,7 @@ unknown、token 为 0——字段映射待补，已知边界在案。守门人�
 - [philosophy.md](philosophy.md) — 思想底稿与经历
 - [dialogist.md](dialogist.md) — 对话者机制
 - [docs/rules.md](docs/rules.md) — 规则体系与判断清单（公开版）
-- [docs/architecture.md](docs/architecture.md) — 架构图（审计环/四层记忆/防自噬）
+- [docs/architecture.md](docs/architecture.md) — 闭环架构（意图 / 执行 / 审计 / 回写）
 - [docs/faq.md](docs/faq.md) — 常见质问与回答
 - [docs/roadmap.md](docs/roadmap.md) — 公开路线图
 
