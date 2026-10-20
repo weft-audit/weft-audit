@@ -18,9 +18,9 @@
 **2026-10-19 实录**：治理层六件套（哨兵/完成否定/判断技能/账本/断点/评分官）
 核心链路 **3 小时 10 分钟**（23:39→02:52）移植进 DSH 0.2.1-rc.2 并全自动发布五仓；
 期间发现并修复一个官方静默禁用缺陷（官方仓库 Discussion #10203）。
-全程记录：[DSH 多 Agent 拓扑迁移实战记录](docs/reports/2026-10-19-DSH多Agent拓扑迁移实战记录.md)
-｜ [最终报告](docs/reports/2026-10-19-DSH生态移植与连接层报告.md)
-｜ [极客简报](docs/reports/2026-10-19-迁移简报-极客版.md)
+全程记录：[DSH 多 Agent 拓扑迁移实战记录](https://github.com/weft-audit/weft-evidence/blob/main/docs/reports/2026-10-19-DSH多Agent拓扑迁移实战记录.md)
+｜ [最终报告](https://github.com/weft-audit/weft-evidence/blob/main/docs/reports/2026-10-19-DSH生态移植与连接层报告.md)
+｜ [极客简报](https://github.com/weft-audit/weft-evidence/blob/main/docs/reports/2026-10-19-迁移简报-极客版.md)
 
 同一模型，20 条真实任务：
 
@@ -50,7 +50,7 @@ OpenTelemetry GenAI 语义**；迁移到 OTel（span 树、可被 Langfuse/Jaege
 ### 裁判可靠性校准（Ground Truth）
 
 「0.97 vs 0.02」是单裁判结果；按评测工程标准，裁判自身必须先校准。
-已备 5 条人工标注集（[校准集](docs/reports/ground-truth-5.md)），
+已备 5 条人工标注集（[校准集](https://github.com/weft-audit/weft-evidence/blob/main/docs/reports/ground-truth-5.md)），
 标注完成后由三眼定分评分官同题复评，计算人工一致率，结果随仓库公开。
 
 ### 守门人机制（2026-10-19 全链实测完成）
@@ -94,13 +94,14 @@ unknown、token 为 0——字段映射待补，已知边界在案。守门人�
    闲聊唤醒不了任何工具，开工必须显式确认。
 ```
 
-## 事故复盘（五篇，全部挂证据等级）
+## 事故复盘（五篇 + 补充案例，全部挂证据等级）
 
-- [42 分钟全线连环崩溃](docs/incidents/incident-2026-10-15.md)（时间线全来自日志）
-- [自噬脑死亡](docs/incidents/incident-self-modify.md)
-- [并发写冲突](docs/incidents/incident-concurrent-write.md)
-- [OOM 强杀](docs/incidents/incident-oom.md)
-- [VPN 断联](docs/incidents/incident-vpn.md)
+- [42 分钟全线连环崩溃](https://github.com/weft-audit/weft-evidence/blob/main/docs/incidents/incident-2026-10-15.md)（时间线全来自日志）
+- [自噬脑死亡](https://github.com/weft-audit/weft-evidence/blob/main/docs/incidents/incident-self-modify.md)
+- [并发写冲突](https://github.com/weft-audit/weft-evidence/blob/main/docs/incidents/incident-concurrent-write.md)
+- [OOM 强杀](https://github.com/weft-audit/weft-evidence/blob/main/docs/incidents/incident-oom.md)
+- [VPN 断联](https://github.com/weft-audit/weft-evidence/blob/main/docs/incidents/incident-vpn.md)
+- [账本字段缺失（补充案例）](https://github.com/weft-audit/weft-evidence/blob/main/docs/incidents/incident-ledger-field-gap.md)
 
 ## 插件
 
@@ -109,14 +110,14 @@ unknown、token 为 0——字段映射待补，已知边界在案。守门人�
 
 ## 其它
 
-- [metrics.md](metrics.md) — 量化账本，每行挂口径
-- [评估方法-20261018.md](评估方法-20261018.md) — rubric 原文与已知局限
-- [philosophy.md](philosophy.md) — 思想底稿与经历
-- [dialogist.md](dialogist.md) — 对话者机制
-- [docs/rules.md](docs/rules.md) — 规则体系与判断清单（公开版）
+- [metrics.md](https://github.com/weft-audit/weft-evidence/blob/main/metrics.md) — 量化账本，每行挂口径
+- [评估方法-20261018.md](https://github.com/weft-audit/weft-evidence/blob/main/评估方法-20261018.md) — rubric 原文与已知局限
+- [philosophy.md](https://github.com/weft-audit/weft-evidence/blob/main/philosophy.md) — 思想底稿与经历
+- [dialogist.md](https://github.com/weft-audit/weft-evidence/blob/main/dialogist.md) — 对话者机制
+- [docs/rules.md](https://github.com/weft-audit/weft-evidence/blob/main/docs/rules.md) — 规则体系与判断清单（公开版）
 - [docs/architecture.md](docs/architecture.md) — 闭环架构（意图 / 执行 / 审计 / 回写）
-- [docs/faq.md](docs/faq.md) — 常见质问与回答
-- [docs/roadmap.md](docs/roadmap.md) — 公开路线图
+- [docs/faq.md](https://github.com/weft-audit/weft-evidence/blob/main/docs/faq.md) — 常见质问与回答
+- [docs/roadmap.md](https://github.com/weft-audit/weft-evidence/blob/main/docs/roadmap.md) — 公开路线图
 
 ## 诚实规则
 
