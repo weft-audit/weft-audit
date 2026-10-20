@@ -108,6 +108,11 @@ unknown、token 为 0——字段映射待补，已知边界在案。守门人�
 - [dsh-guardrail](https://github.com/weft-audit/dsh-guardrail) —
   双清单护栏，15 例测试全 PASS，Windows/Linux 双规则集。
 
+## 核心代码
+
+- [weft](https://github.com/weft-audit/weft) — 可运行的意图治理内核；
+  当前包含目标编译器 V0、Python CLI、样例与 15 组离线测试。
+
 ## 其它
 
 - [metrics.md](https://github.com/weft-audit/weft-evidence/blob/main/metrics.md) — 量化账本，每行挂口径
