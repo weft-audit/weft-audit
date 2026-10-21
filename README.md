@@ -1,130 +1,59 @@
 # weft — 意图驱动平台的底层安全与治理引擎验证（PoC）
 
-> 一个可复现的治理层 PoC：把纯意图编译成有边界、有证据、可回滚的
-> 多 Agent 工作链。
+> 把纯意图编译成有边界、有证据、可回滚的多 Agent 工作规格。
 >
-> 本仓库验证底层安全与治理引擎，不宣称已经完成整个意图驱动平台。
+> 本组织验证治理层，不宣称已经完成整个意图驱动平台。
 
-| 核心指标 | 数据 |
-|---|---|
-| 实验消耗 | 42.8 亿 Token（近 30 天；其中近 7 天 28.9 亿，窗口至 10-19） |
-| 治理插件 | 6 个已上线（独立审计 9–10/10） |
-| A/B 评测 | 编排组 0.97 vs 裸跑 0.02 |
-| 稳定性提升 | 评分方差 std 1.174 → 0.366 |
-| 事故闭环 | 5 篇带日志的排障复盘 |
+## 一句话
+
+所有者只输入意图；系统先确认这是工作请求，再把意图编译成规格，交给多 Agent
+执行，经过微小审计与独立审计，最后把结果、证据和记忆候选送回所有者。
+
+## 当前状态（2026-10-21）
+
+| 层 | 已验证状态 | 入口 |
+|---|---|---|
+| 意图入口 | 闲聊与工作请求分开；工作请求必须显式确认 | [闭环架构](docs/architecture.md) |
+| 目标编译 | 目标编译器 V0：红线、批准点、回滚与 15 组离线测试 | [weft](https://github.com/weft-audit/weft) |
+| 执行链 | 经确认跑通一次只读任务：编译 `READY`，工作链返回办事者与双层审计结果 | [实跑证据](https://github.com/weft-audit/weft-evidence/blob/main/docs/reports/2026-10-21-live-intent-entry.md) |
+| 审计 | 办事与审查分离；审计只读，不替所有者裁决 | [证据方法](https://github.com/weft-audit/weft-evidence/blob/main/评估方法-20261018.md) |
+| 记忆 | 有检索、来源与所有者批准边界；自动晋升尚未接通 | [证据包](https://github.com/weft-audit/weft-evidence) |
+| 插件 | 6 个治理插件公开，市场索引可安装 | [DSH Market](https://github.com/weft-audit/dsh-market) |
+
+单入口实跑只覆盖一条简单只读任务；写操作、失败回滚、长任务、并发和断线恢复
+仍属于下一轮反例测试。
+
+## 可核验结果
+
+- 同一模型、20 条本地真实任务 A/B：带治理编排组 `0.97–1.00`，
+  无工具对照组 `0.02–0.07`；rubric、脚本、历次报告均公开。
+- 评分稳定性：三眼定分标准差从 `1.174` 收敛到 `0.366`。
+- 人工校准：5 条样本一致率 `4/5`，唯一分歧与修法已公开。
+- DSH 治理六件套迁移用时 `3 小时 10 分钟`；迁移中发现并公开一个
+  `skill-filesystem` 预检缺陷。
+- 六插件全部公开，独立审计终评 `9–10/10`。
+- 五篇事故复盘与补充案例保留原始失败记录，不只展示成功案例。
+
+详细数据、原始记录、环境变量和限制：
+[weft-evidence](https://github.com/weft-audit/weft-evidence)
+
+## 仓库地图
+
+- [weft](https://github.com/weft-audit/weft) — 可运行的确定性目标编译器与治理原语；
+- [weft-evidence](https://github.com/weft-audit/weft-evidence) — 评测、事故、口径与复现实验材料；
+- [dsh-market](https://github.com/weft-audit/dsh-market) — 六插件索引与安装入口；
+- [dsh-guardrail](https://github.com/weft-audit/dsh-guardrail) — 双清单安全护栏；
+- [dsh-audit](https://github.com/weft-audit/dsh-audit) — 固定 rubric 评分官；
+- [dsh-ledger](https://github.com/weft-audit/dsh-ledger) — 用量账本；
+- [dsh-checkpoint](https://github.com/weft-audit/dsh-checkpoint) — 任务断点协议；
+- [dsh-judgement](https://github.com/weft-audit/dsh-judgement) — 判断力清单技能；
+- [dsh-dod](https://github.com/weft-audit/dsh-dod) — 证据优先的完成检查。
+
+## 边界
+
+- 不声称“AI 会手写代码”等于所有者会手写代码；所有者负责目标、规则、取舍与终裁。
+- 不把自定义 JSONL 日志冒充 OpenTelemetry；语义对齐仍是路线图。
+- 不把一次成功当作普遍稳定性，不把记忆候选自动写成长期记忆。
+- 无命令、回读或原始输出的内容，不标记为完成。
 
 > The future of software isn't about syntax; it's about Intent and Governance.
-
-**2026-10-19 实录**：治理层六件套（哨兵/完成否定/判断技能/账本/断点/评分官）
-核心链路 **3 小时 10 分钟**（23:39→02:52）移植进 DSH 0.2.1-rc.2 并全自动发布五仓；
-期间发现并修复一个官方静默禁用缺陷（官方仓库 Discussion #10203）。
-全程记录：[DSH 多 Agent 拓扑迁移实战记录](https://github.com/weft-audit/weft-evidence/blob/main/docs/reports/2026-10-19-DSH多Agent拓扑迁移实战记录.md)
-｜ [最终报告](https://github.com/weft-audit/weft-evidence/blob/main/docs/reports/2026-10-19-DSH生态移植与连接层报告.md)
-｜ [极客简报](https://github.com/weft-audit/weft-evidence/blob/main/docs/reports/2026-10-19-迁移简报-极客版.md)
-
-同一模型，20 条真实任务：
-
-| 组 | 配置 | 得分 |
-|---|---|---|
-| A | 多 Agent 编排（三层审计 + 心跳遥测） | **0.97 ~ 1.00** |
-| B | 裸模型，无工具 | **0.02 ~ 0.07** |
-
-模型没有变，变的是编排。评分 rubric 原文、脚本、历次报告全在本仓库，
-`python regression.py` 一键复跑。
-
-### 与生态内现有方案的区别（据对方 README 核实，2026-10-19）
-
-| 方案 | 它们做的 | 我们的差异 |
-|---|---|---|
-| dsh-tower（多 Agent 编排，worktree 隔离） | 提交前的审查/合并门禁 | 我们是**运行时逐事件拦截**：每一步都过闸，不是合并前一次性审 |
-| dsh-codex-ultra-mode（动态子智能体编排） | 任务开始后的动态分解与回收 | 我们多一层**入口守门人**：闲聊态零工具，工作意图必须显式确认才拉起系统 |
-| 各类插件族 | 能力扩展 | 我们做的是治理层（车间主任），不是更多螺丝刀 |
-
-### 可观测性说明（诚实标注）
-
-当前遥测为自定义格式（心跳计数器 + JSONL 事件日志），**尚未对齐
-OpenTelemetry GenAI 语义**；迁移到 OTel（span 树、可被 Langfuse/Jaeger 消费）
-为明确目标，未完成前不宣称「可观测性对齐行业标准」。日志不含任何密钥明文，
-脱敏扫描在案。
-
-### 裁判可靠性校准（Ground Truth）
-
-「0.97 vs 0.02」是单裁判结果；按评测工程标准，裁判自身必须先校准。
-已备 5 条人工标注集（[校准集](https://github.com/weft-audit/weft-evidence/blob/main/docs/reports/ground-truth-5.md)），
-标注完成后由三眼定分评分官同题复评，计算人工一致率，结果随仓库公开。
-
-### 守门人机制（2026-10-19 全链实测完成）
-
-状态机（闲聊锁死 → 意图识别 → 反问确认 → 拉起多 Agent → 收工锁回）：
-
-```text
-用户输入 → 意图识别
-   ├─ 非工作意图 → 闲聊应答（零工具）
-   └─ 工作意图 → 反问「要拉起系统吗？」→ 确认后才拉起
-                        办事者执行 → 微小审计盯主体 → 审计者复查 → 记忆管家记账
-```
-
-桌面端六插件已在生产记账（账本真实条目，脱敏摘录）：
-
-```text
-{"ts":"2026-10-18T22:39:30.877Z","session":"session-a17d…","provider":"unknown","model":"unknown","prompt_tokens":0,"completion_tokens":0}
-```
-
-诚实边界：账本已在桌面端生产环境落盘三条事件，但 provider/model 解析为
-unknown、token 为 0——字段映射待补，已知边界在案。守门人协议同日完成全链
-实测：状态机成功拦截非工作意图，并成功拉起三层审计；完整联调日志留待
-面试现场演示。
-
-### 自我纠错实录
-
-我们公开承认并登记自己的失误（踩坑 #41–#48）：归因跳步、调用撒手、单角度
-结论、状态卡漏同步、发布脚本细节错、以及一次「差点编造账本摘录」——提交前
-被自审拦下并改读真账。自审机制拦住幻觉的这一次，比任何完美数据都更能说明
-「意图驱动 + 审计闭环」真实生效。
-
-## 四大铁律
-
-```
-1. 防自噬：代码层不可变，能力层可扩展（Skill/插件经测试挂载）。
-   来源：Agent 改自身代码导致脑死亡的真实事故。
-2. 三层审计：小审计双清单（硬命中即暂停，软项只建议）；
-   大审计 0-10 裁决；审计器只读，人类终裁。
-3. 五分钟遥测：心跳轻唤醒，物理静默；白班交互校准，夜班自动跑批。
-4. 意图触发（设计稿）：对话者与办事系统物理隔离；
-   闲聊唤醒不了任何工具，开工必须显式确认。
-```
-
-## 事故复盘（五篇 + 补充案例，全部挂证据等级）
-
-- [42 分钟全线连环崩溃](https://github.com/weft-audit/weft-evidence/blob/main/docs/incidents/incident-2026-10-15.md)（时间线全来自日志）
-- [自噬脑死亡](https://github.com/weft-audit/weft-evidence/blob/main/docs/incidents/incident-self-modify.md)
-- [并发写冲突](https://github.com/weft-audit/weft-evidence/blob/main/docs/incidents/incident-concurrent-write.md)
-- [OOM 强杀](https://github.com/weft-audit/weft-evidence/blob/main/docs/incidents/incident-oom.md)
-- [VPN 断联](https://github.com/weft-audit/weft-evidence/blob/main/docs/incidents/incident-vpn.md)
-- [账本字段缺失（补充案例）](https://github.com/weft-audit/weft-evidence/blob/main/docs/incidents/incident-ledger-field-gap.md)
-
-## 插件
-
-- [dsh-guardrail](https://github.com/weft-audit/dsh-guardrail) —
-  双清单护栏，15 例测试全 PASS，Windows/Linux 双规则集。
-
-## 核心代码
-
-- [weft](https://github.com/weft-audit/weft) — 可运行的意图治理内核；
-  当前包含目标编译器 V0、Python CLI、样例与 15 组离线测试。
-
-## 其它
-
-- [metrics.md](https://github.com/weft-audit/weft-evidence/blob/main/metrics.md) — 量化账本，每行挂口径
-- [评估方法-20261018.md](https://github.com/weft-audit/weft-evidence/blob/main/评估方法-20261018.md) — rubric 原文与已知局限
-- [philosophy.md](https://github.com/weft-audit/weft-evidence/blob/main/philosophy.md) — 思想底稿与经历
-- [dialogist.md](https://github.com/weft-audit/weft-evidence/blob/main/dialogist.md) — 对话者机制
-- [docs/rules.md](https://github.com/weft-audit/weft-evidence/blob/main/docs/rules.md) — 规则体系与判断清单（公开版）
-- [docs/architecture.md](docs/architecture.md) — 闭环架构（意图 / 执行 / 审计 / 回写）
-- [docs/faq.md](https://github.com/weft-audit/weft-evidence/blob/main/docs/faq.md) — 常见质问与回答
-- [docs/roadmap.md](https://github.com/weft-audit/weft-evidence/blob/main/docs/roadmap.md) — 公开路线图
-
-## 诚实规则
-
-本仓库只放能复现的东西。面板实录与机记切片分列标注，不混；
-所有者口述一律标【口述】；无证据不算完成。
